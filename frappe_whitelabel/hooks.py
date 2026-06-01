@@ -32,10 +32,9 @@ app_include_css = [
 	"/assets/frappe_whitelabel/css/google_translate.css",
 ]
 
-# Reverse Frappe core /app -> /desk redirects; keep users on /app
+# Map /desk/* subpaths to /app/*; bare /desk and /app use Sidebar Configuration home (client + cache)
 website_redirects = [
 	{"source": r"/desk/(.*)", "target": r"/app/\1", "forward_query_parameters": True},
-	{"source": "/desk", "target": "/app"},
 ]
 
 before_request = ["frappe_whitelabel.utils.route_guard.block_desk_urls"]
@@ -45,6 +44,7 @@ boot_session = ["frappe_whitelabel.boot.session_boot"]
 app_include_js = [
 	"/assets/frappe_whitelabel/js/sidebar/google_translate.js",
 	"/assets/frappe_whitelabel/js/desk_route_guard.js",
+	"/assets/frappe_whitelabel/js/sidebar/sidebar_route_allowlist.js",
 	"/assets/frappe_whitelabel/js/sidebar/sidebar_store.js",
 	"/assets/frappe_whitelabel/js/sidebar/sidebar_theme.js",
 	"/assets/frappe_whitelabel/js/sidebar/sidebar_service.js",

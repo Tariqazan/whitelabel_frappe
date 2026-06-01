@@ -15,3 +15,7 @@ class SidebarConfiguration(Document):
 		from frappe.translate import clear_cache as clear_translation_cache
 
 		clear_translation_cache()
+
+		from frappe_whitelabel.utils.route_guard import sync_whitelabel_home_redirect
+
+		sync_whitelabel_home_redirect()

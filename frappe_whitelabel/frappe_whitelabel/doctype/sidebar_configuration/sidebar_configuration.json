@@ -1,6 +1,6 @@
 {
  "actions": [],
- "creation": "2026-06-01 12:00:00.000000",
+ "creation": "2026-06-01 12:00:00",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -9,6 +9,7 @@
   "company",
   "logo",
   "active",
+  "home",
   "settings_section",
   "enable_favorites",
   "enable_recent_items",
@@ -29,14 +30,15 @@
   {
    "fieldname": "sidebar_name",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Sidebar Name",
    "reqd": 1
   },
   {
+   "description": "Company Name shown in the sidebar header",
    "fieldname": "company",
    "fieldtype": "Data",
-   "label": "Company",
-   "description": "Company Name shown in the sidebar header"
+   "label": "Company"
   },
   {
    "fieldname": "logo",
@@ -45,10 +47,10 @@
   },
   {
    "default": "0",
+   "description": "Enable this sidebar configuration globally",
    "fieldname": "active",
    "fieldtype": "Check",
-   "label": "Active",
-   "description": "Enable this sidebar configuration globally"
+   "label": "Active"
   },
   {
    "fieldname": "settings_section",
@@ -97,17 +99,17 @@
   },
   {
    "default": "#6366f1",
+   "description": "Active links, accents, and highlights",
    "fieldname": "primary_color",
    "fieldtype": "Color",
-   "label": "Primary Color",
-   "description": "Active links, accents, and highlights"
+   "label": "Primary Color"
   },
   {
    "default": "#64748b",
+   "description": "Muted text and secondary UI elements",
    "fieldname": "secondary_color",
    "fieldtype": "Color",
-   "label": "Secondary Color",
-   "description": "Muted text and secondary UI elements"
+   "label": "Secondary Color"
   },
   {
    "fieldname": "column_break_colors",
@@ -135,11 +137,16 @@
    "fieldtype": "Table",
    "label": "Menu Items",
    "options": "Sidebar Menu Item"
+  },
+  {
+   "fieldname": "home",
+   "fieldtype": "Data",
+   "label": "Home"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2026-06-01 12:00:00.000000",
+ "modified": "2026-06-01 11:36:39.579281",
  "modified_by": "Administrator",
  "module": "Frappe Whitelabel",
  "name": "Sidebar Configuration",
@@ -157,6 +164,7 @@
   }
  ],
  "quick_entry": 1,
+ "row_format": "Dynamic",
  "sort_field": "creation",
  "sort_order": "DESC",
  "states": [],

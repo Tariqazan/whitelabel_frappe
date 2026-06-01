@@ -25,8 +25,16 @@
 							Store.setState({
 								company: data.company,
 								settings: data.settings,
-								menuItems: data.menu || []
+								menuItems: data.menu || [],
+								routeGuard: data.route_guard || {
+									enabled: false,
+									allowed_routes: [],
+								},
 							});
+							if (WhitelabelSidebar.RouteAllowlist) {
+								WhitelabelSidebar.RouteAllowlist.syncFromSidebarData(data);
+								WhitelabelSidebar.RouteAllowlist.enforceCurrentRoute();
+							}
 							resolve(data);
 						} else {
 							reject("No data returned from sidebar API");
@@ -118,8 +126,15 @@
 				Router.navigate(route, openInNewTab);
 				return;
 			}
-			if (!route || route === "#" || /^\/desk\/?$/i.test(route)) {
-				return;
+			if (!route || route === "#" || /^\/desk\/?$/i.test(route) || /^\/app\/?$/i.test(route)) {
+				const home =
+					Store.get().settings?.home_route ||
+					(typeof frappe !== "undefined" && frappe.boot?.wl_home_route);
+				if (home) {
+					route = home;
+				} else {
+					return;
+				}
 			}
 			frappe.set_route(route.replace(/^\/desk\/?/i, "").replace(/^\//, ""));
 		},

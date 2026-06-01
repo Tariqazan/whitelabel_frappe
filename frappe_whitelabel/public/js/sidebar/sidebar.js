@@ -224,6 +224,9 @@
 		if (window.FrappeWhitelabelRouteGuard) {
 			window.FrappeWhitelabelRouteGuard.init();
 		}
+		if (window.WhitelabelSidebar.RouteAllowlist) {
+			window.WhitelabelSidebar.RouteAllowlist.init();
+		}
 		window.WhitelabelSidebar.Manager = new SidebarManager();
 		window.WhitelabelSidebar.Manager.init();
 	}

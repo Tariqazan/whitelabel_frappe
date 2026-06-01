@@ -6,15 +6,27 @@
 	"use strict";
 
 	const DESK_HOME = /^\/desk\/?$/i;
+	const APP_HOME = /^\/app\/?$/i;
 	const DESK_PREFIX = /^\/desk(\/|$)/i;
+
+	function getHomeRoute() {
+		if (typeof frappe !== "undefined" && frappe.boot && frappe.boot.wl_home_route) {
+			return frappe.boot.wl_home_route;
+		}
+		return null;
+	}
+
+	function isBareDeskOrApp(path) {
+		return DESK_HOME.test(path) || APP_HOME.test(path);
+	}
 
 	function toAppPath(path) {
 		if (!path) return "";
 		let p = String(path).trim();
 		if (!p || p === "#") return "";
 
-		if (DESK_HOME.test(p)) {
-			return "/app";
+		if (isBareDeskOrApp(p)) {
+			return getHomeRoute() || "/app";
 		}
 		if (DESK_PREFIX.test(p)) {
 			return p.replace(/^\/desk\/?/i, "/app/");
@@ -40,16 +52,23 @@
 
 	function fixBrowserLocation() {
 		const path = window.location.pathname || "";
-		if (!DESK_PREFIX.test(path)) {
+		if (!DESK_PREFIX.test(path) && !APP_HOME.test(path)) {
 			return;
 		}
 		const target = toAppPath(path) + window.location.search + window.location.hash;
+		if (target === path + window.location.search + window.location.hash) {
+			return;
+		}
 		history.replaceState(history.state, "", target);
 	}
 
 	function routeToSegments(route) {
 		const path = toAppPath(route);
+		const home = getHomeRoute();
 		if (!path || path === "/app" || path === "/app/") {
+			if (home) {
+				return routeToSegments(home);
+			}
 			return null;
 		}
 		if (/^(https?:)?\/\//i.test(path)) {
@@ -93,12 +112,40 @@
 			const segments = routeToSegments(normalized);
 			if (segments && segments.length) {
 				frappe.set_route(...segments);
-			} else if (normalized === "/app") {
+				return;
+			}
+
+			const home = getHomeRoute();
+			if (home && (normalized === "/app" || isBareDeskOrApp(normalized))) {
+				this.navigate(home, false);
+				return;
+			}
+
+			if (normalized === "/app") {
 				history.replaceState(history.state, "", "/app" + window.location.search);
 				if (frappe.router) {
 					frappe.router.route();
 				}
 			}
+		},
+
+		ensureHomeRoute() {
+			const home = getHomeRoute();
+			if (!home || typeof frappe === "undefined" || !frappe.router) {
+				return;
+			}
+
+			const path = window.location.pathname || "";
+			if (!isBareDeskOrApp(path)) {
+				return;
+			}
+
+			const sub = frappe.router.get_sub_path();
+			if (sub) {
+				return;
+			}
+
+			this.navigate(home, false);
 		},
 
 		patchHistory() {
@@ -199,6 +246,7 @@
 			this.bindLinkGuard();
 			this.bindPopstate();
 			this.patchFrappeRouter();
+			this.ensureHomeRoute();
 		},
 	};
 
@@ -209,6 +257,7 @@
 	function bootstrap() {
 		Guard.init();
 		if (typeof frappe !== "undefined" && frappe.router) {
+			Guard.ensureHomeRoute();
 			return;
 		}
 		setTimeout(bootstrap, 50);

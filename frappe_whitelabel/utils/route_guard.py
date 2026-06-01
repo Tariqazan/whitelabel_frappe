@@ -6,6 +6,8 @@ import re
 
 import frappe
 
+from frappe_whitelabel.api.sidebar import get_whitelabel_home_route
+
 DESK_PATH_RE = re.compile(r"^/desk(/.*)?$", re.I)
 
 
@@ -18,16 +20,28 @@ def desk_path_to_app(path: str) -> str:
 	return "/app" + path[5:]
 
 
+def sync_whitelabel_home_redirect():
+	"""Cache /app bare URL -> Sidebar Configuration home (website redirect layer)."""
+	home = get_whitelabel_home_route()
+	for path in ("/app", "/app/"):
+		if home:
+			frappe.cache.hset("website_redirects", path, home)
+		else:
+			frappe.cache.hset("website_redirects", path, False)
+
+
 def block_desk_urls():
 	"""
 	Global request guard: keep /app URLs on /app (block Frappe core /app -> /desk redirects).
 
-	Note: /desk -> /app is handled via website_redirects in hooks.py, not here.
+	Bare /app -> home is set via website_redirects cache (sync_whitelabel_home_redirect).
 	frappe.redirect() must not be used in before_request — Redirect is only
 	caught inside the website get_response() flow.
 	"""
 	if not getattr(frappe.local, "request", None):
 		return
+
+	sync_whitelabel_home_redirect()
 
 	path = frappe.request.path or ""
 
