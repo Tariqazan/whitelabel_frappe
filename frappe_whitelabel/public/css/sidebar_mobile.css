@@ -1,0 +1,159 @@
+/**
+ * Whitelabel Sidebar Stylesheets - Mobile Drawer Styles
+ * Fully optimized touch & swipe responsive architecture.
+ */
+
+/* Hide mobile triggers on desktop */
+.wl-mobile-trigger {
+	display: none !important;
+}
+
+.wl-mobile-backdrop {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(15, 23, 42, 0.4);
+	backdrop-filter: blur(4px);
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 250ms ease;
+	z-index: 9999;
+}
+
+body.wl-sidebar-mobile-open .wl-mobile-backdrop {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+@media (max-width: 991px) {
+	/* Override body layout behaviour on small screens */
+	body.wl-sidebar-active {
+		display: block !important;
+	}
+
+	body.wl-sidebar-active .body-sidebar-container {
+		position: fixed !important;
+		top: 0 !important;
+		left: 0 !important;
+		height: 100vh !important;
+		width: var(--sidebar-width-expanded) !important;
+		min-width: var(--sidebar-width-expanded) !important;
+		transform: translateX(-100%) !important;
+		transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+		box-shadow: none;
+		z-index: 10000 !important;
+	}
+
+	body.wl-sidebar-active.wl-sidebar-mobile-open .body-sidebar-container {
+		transform: translateX(0) !important;
+		box-shadow: 4px 0 24px rgba(15, 23, 42, 0.15) !important;
+	}
+
+	/* Force expanded elements on mobile drawer */
+	body.wl-sidebar-collapsed .body-sidebar-container {
+		width: var(--sidebar-width-expanded) !important;
+		min-width: var(--sidebar-width-expanded) !important;
+		transform: translateX(-100%) !important;
+	}
+
+	body.wl-sidebar-collapsed.wl-sidebar-mobile-open .body-sidebar-container {
+		transform: translateX(0) !important;
+	}
+
+	body.wl-sidebar-collapsed .wl-company-name,
+	body.wl-sidebar-collapsed .wl-search-input,
+	body.wl-sidebar-collapsed .wl-item-label,
+	body.wl-sidebar-collapsed .wl-group-toggle,
+	body.wl-sidebar-collapsed .wl-sub-toggle,
+	body.wl-sidebar-collapsed .wl-sub-items,
+	body.wl-sidebar-collapsed .wl-user-details,
+	body.wl-sidebar-collapsed .wl-favorite-btn {
+		display: flex !important;
+	}
+
+	body.wl-sidebar-collapsed .wl-sidebar-header {
+		justify-content: space-between !important;
+		padding: var(--sb-space-lg) !important;
+	}
+
+	body.wl-sidebar-collapsed .wl-brand-wrapper {
+		justify-content: flex-start !important;
+	}
+
+	body.wl-sidebar-collapsed .wl-menu-link {
+		justify-content: flex-start !important;
+		padding: var(--sb-space-sm) var(--sb-space-md) !important;
+	}
+
+	body.wl-sidebar-collapsed .wl-sidebar-footer {
+		justify-content: space-between !important;
+		padding: var(--sb-space-md) var(--sb-space-lg) !important;
+	}
+
+	body.wl-sidebar-collapsed .wl-footer-actions {
+		flex-direction: row !important;
+	}
+
+	body.wl-sidebar-collapsed .wl-sidebar-search {
+		padding: var(--sb-space-md) var(--sb-space-lg) !important;
+	}
+
+	body.wl-sidebar-collapsed .wl-search-input-wrapper {
+		justify-content: flex-start !important;
+	}
+
+	body.wl-sidebar-collapsed .wl-search-icon {
+		position: absolute !important;
+	}
+
+	/* Mobile trigger: when inside the navbar, sit naturally in the flow */
+	.wl-mobile-trigger {
+		display: inline-flex !important;
+		position: relative !important;
+		top: auto !important;
+		left: auto !important;
+		z-index: auto !important;
+		width: 40px !important;
+		height: 40px !important;
+		flex-shrink: 0 !important;
+		background: transparent !important;
+		border: none !important;
+		border-radius: 6px !important;
+		align-items: center !important;
+		justify-content: center !important;
+		color: var(--sidebar-text, #0f172a) !important;
+		cursor: pointer !important;
+		transition: background 150ms ease !important;
+		outline: none !important;
+		vertical-align: middle !important;
+	}
+
+	.wl-mobile-trigger:hover {
+		background: rgba(0,0,0,0.06) !important;
+	}
+
+	.wl-mobile-trigger:active {
+		background: rgba(0,0,0,0.1) !important;
+	}
+
+	/* If the trigger couldn't find a navbar and is still on body, fall back to fixed */
+	body > .wl-mobile-trigger {
+		position: fixed !important;
+		top: 8px !important;
+		left: 8px !important;
+		z-index: 9990 !important;
+		background: #ffffff !important;
+		border: 1px solid var(--sidebar-border) !important;
+		border-radius: 8px !important;
+		box-shadow: 0 2px 8px rgba(15,23,42,0.1) !important;
+	}
+
+	/* Page content fills full width — drawer overlays it */
+	body.wl-sidebar-active .page-container,
+	body.wl-sidebar-active .layout-main {
+		padding-left: 0 !important;
+		margin-left: 0 !important;
+	}
+}

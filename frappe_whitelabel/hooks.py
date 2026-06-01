@@ -25,8 +25,34 @@ app_license = "mit"
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/frappe_whitelabel/css/frappe_whitelabel.css"
-# app_include_js = "/assets/frappe_whitelabel/js/frappe_whitelabel.js"
+app_include_css = [
+	"/assets/frappe_whitelabel/css/sidebar.css",
+	"/assets/frappe_whitelabel/css/sidebar_mobile.css",
+	"/assets/frappe_whitelabel/css/sidebar_dark.css",
+	"/assets/frappe_whitelabel/css/google_translate.css",
+]
+
+# Reverse Frappe core /app -> /desk redirects; keep users on /app
+website_redirects = [
+	{"source": r"/desk/(.*)", "target": r"/app/\1", "forward_query_parameters": True},
+	{"source": "/desk", "target": "/app"},
+]
+
+before_request = ["frappe_whitelabel.utils.route_guard.block_desk_urls"]
+
+boot_session = ["frappe_whitelabel.boot.session_boot"]
+
+app_include_js = [
+	"/assets/frappe_whitelabel/js/sidebar/google_translate.js",
+	"/assets/frappe_whitelabel/js/desk_route_guard.js",
+	"/assets/frappe_whitelabel/js/sidebar/sidebar_store.js",
+	"/assets/frappe_whitelabel/js/sidebar/sidebar_theme.js",
+	"/assets/frappe_whitelabel/js/sidebar/sidebar_service.js",
+	"/assets/frappe_whitelabel/js/sidebar/sidebar_renderer.js",
+	"/assets/frappe_whitelabel/js/sidebar/sidebar_footer.js",
+	"/assets/frappe_whitelabel/js/sidebar/sidebar_events.js",
+	"/assets/frappe_whitelabel/js/sidebar/sidebar.js"
+]
 
 # include js, css files in header of web template
 # web_include_css = "/assets/frappe_whitelabel/css/frappe_whitelabel.css"
@@ -43,7 +69,9 @@ app_license = "mit"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-# doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_js = {
+	"Sidebar Configuration": "public/js/sidebar_menu_item.js",
+}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}

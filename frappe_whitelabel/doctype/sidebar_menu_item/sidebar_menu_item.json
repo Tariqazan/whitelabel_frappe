@@ -1,0 +1,28 @@
+{
+  "doctype": "DocType",
+  "module": "frappe_whitelabel",
+  "custom": 0,
+  "fields": [
+    {"fieldname": "label", "label": "Label", "fieldtype": "Data", "reqd": 1},
+    {"fieldname": "icon", "label": "Icon", "fieldtype": "Icon"},
+    {"fieldname": "parent_item", "label": "Parent Item", "fieldtype": "Link", "options": "Sidebar Menu Item"},
+    {"fieldname": "sequence", "label": "Sequence", "fieldtype": "Int", "default": 0},
+    {"fieldname": "route_type", "label": "Route Type", "fieldtype": "Select", "options": "DocType\nReport\nPage\nWorkspace\nURL\nCustom Route", "default": "DocType"},
+    {"fieldname": "doctype_link", "label": "DocType", "fieldtype": "Link", "options": "DocType"},
+    {"fieldname": "report_link", "label": "Report", "fieldtype": "Link", "options": "Report"},
+    {"fieldname": "page_link", "label": "Page", "fieldtype": "Link", "options": "Page"},
+    {"fieldname": "workspace_link", "label": "Workspace", "fieldtype": "Link", "options": "Workspace"},
+    {"fieldname": "url", "label": "URL", "fieldtype": "Data"},
+    {"fieldname": "custom_route", "label": "Custom Route", "fieldtype": "Data"},
+    {"fieldname": "enabled", "label": "Enabled", "fieldtype": "Check", "default": 1},
+    {"fieldname": "permission_rule", "label": "Permission Rule", "fieldtype": "Link", "options": "Role"},
+    {"fieldname": "open_in_new_tab", "label": "Open In New Tab", "fieldtype": "Check"}
+  ],
+  "permissions": [],
+  "istable": 1,
+  "is_single": 0,
+  "quick_entry": 1,
+  "track_changes": 0,
+  "name": "Sidebar Menu Item",
+  "module": "FrappWhitelabel"
+}

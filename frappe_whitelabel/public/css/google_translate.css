@@ -1,0 +1,42 @@
+/**
+ * Hide Google Translate toolbar / banner on Frappe Desk
+ */
+.goog-te-banner-frame,
+.goog-te-balloon-frame,
+#goog-gt-tt,
+.goog-te-gadget,
+.goog-te-menu-value span,
+.skiptranslate,
+body > .skiptranslate {
+	display: none !important;
+}
+
+body {
+	top: 0 !important;
+	position: static !important;
+}
+
+#wl_google_translate_element,
+#google_translate_element {
+	display: none !important;
+	height: 0 !important;
+	overflow: hidden !important;
+	visibility: hidden !important;
+}
+
+iframe.goog-te-menu-frame,
+.goog-te-menu-frame {
+	display: none !important;
+}
+
+/* Prevent layout shift from translated font wrapper */
+font[style] {
+	background-color: transparent !important;
+	box-shadow: none !important;
+}
+
+/* Language selector options stay English / বাংলা / 日本語 */
+.wl-language-select,
+.wl-language-select option {
+	translate: no;
+}

@@ -1,0 +1,71 @@
+{
+  "doctype": "DocType",
+  "module": "frappe_whitelabel",
+  "custom": 0,
+  "fields": [
+    {
+      "fieldname": "company",
+      "label": "Company",
+      "fieldtype": "Data",
+      "reqd": 1
+    },
+    {
+      "fieldname": "logo",
+      "label": "Logo",
+      "fieldtype": "Image",
+      "options": "image"
+    },
+    {
+      "fieldname": "avatar",
+      "label": "Avatar",
+      "fieldtype": "Image",
+      "options": "image"
+    },
+    {
+      "fieldname": "active",
+      "label": "Active",
+      "fieldtype": "Check"
+    },
+    {
+      "fieldname": "enable_favorites",
+      "label": "Enable Favorites",
+      "fieldtype": "Check"
+    },
+    {
+      "fieldname": "enable_recent_items",
+      "label": "Enable Recent Items",
+      "fieldtype": "Check"
+    },
+    {
+      "fieldname": "enable_search",
+      "label": "Enable Search",
+      "fieldtype": "Check"
+    },
+    {
+      "fieldname": "sidebar_theme",
+      "label": "Sidebar Theme",
+      "fieldtype": "Select",
+      "options": "Light\nDark\nSystem",
+      "default": "System"
+    },
+    {
+      "fieldname": "collapse_by_default",
+      "label": "Collapse By Default",
+      "fieldtype": "Check"
+    },
+    {
+      "fieldname": "menu_items",
+      "label": "Menu Items",
+      "fieldtype": "Table",
+      "options": "Sidebar Menu Item"
+    }
+  ],
+  "permissions": [],
+  "is_single": 1,
+  "is_submittable": 0,
+  "istable": 0,
+  "name": "Sidebar Configuration",
+  "module": "FrappWhitelabel",
+  "quick_entry": 0,
+  "track_changes": 0
+}
