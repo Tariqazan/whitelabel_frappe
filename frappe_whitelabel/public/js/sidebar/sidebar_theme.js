@@ -27,6 +27,23 @@
 		return normalizePath(window.location.pathname);
 	}
 
+	/**
+	 * Read the active Frappe theme's primary color from CSS custom properties.
+	 * Frappe/ERPNext themes set --primary (and fallback names) on :root.
+	 */
+	function getFrappeThemePrimary() {
+		try {
+			const style = getComputedStyle(document.documentElement);
+			return (
+				style.getPropertyValue("--primary").trim() ||
+				style.getPropertyValue("--primary-color").trim() ||
+				null
+			);
+		} catch (e) {
+			return null;
+		}
+	}
+
 	function hexToRgba(hex, alpha) {
 		if (!hex) {
 			return "";
@@ -106,7 +123,8 @@
 				rootEl.classList.add("wl-theme-dark");
 			}
 
-			const primary = colors.primary_color;
+			// Sidebar Configuration color wins; fall back to active Frappe theme primary.
+			const primary = colors.primary_color || getFrappeThemePrimary();
 			const secondary = colors.secondary_color;
 			const bgLight = colors.background_light;
 			const bgDark = colors.background_dark;
@@ -117,7 +135,10 @@
 				vars["--wl-primary"] = primary;
 				vars["--sidebar-accent"] = primary;
 				vars["--sidebar-active-text"] = primary;
-				vars["--sidebar-active-bg"] = hexToRgba(primary, dark ? 0.18 : 0.1);
+				// hexToRgba works for hex values; color-mix() handles any CSS color format.
+				const activeBg = hexToRgba(primary, dark ? 0.18 : 0.1);
+				vars["--sidebar-active-bg"] = activeBg ||
+					`color-mix(in srgb, ${primary} ${dark ? 18 : 10}%, transparent)`;
 			}
 			if (secondary) {
 				vars["--wl-secondary"] = secondary;
