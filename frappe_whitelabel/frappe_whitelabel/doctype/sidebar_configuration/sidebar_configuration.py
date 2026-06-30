@@ -7,10 +7,6 @@ from frappe.model.document import Document
 
 class SidebarConfiguration(Document):
 	def on_update(self):
-		# Clear the cache when the settings are updated
-		frappe.cache().hdel("sidebar_data", "global")
-		# Also delete specific user cache entries since permissions or routes might have changed
-		frappe.cache().delete_keys("sidebar_data_*")
 		# Refresh merged translations if language files changed
 		from frappe.translate import clear_cache as clear_translation_cache
 

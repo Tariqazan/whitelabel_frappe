@@ -168,13 +168,6 @@ def get_sidebar_data():
 	and builds the nested tree layout.
 	"""
 	user = frappe.session.user
-	cache_key = f"sidebar_data_{user}"
-	
-	# Try to fetch from cache first
-	cached_data = frappe.cache().get_value(cache_key)
-	if cached_data:
-		return frappe.parse_json(cached_data)
-		
 	doc = get_active_sidebar_configuration()
 
 	if not doc:
@@ -223,7 +216,7 @@ def get_sidebar_data():
 	menu_tree = build_nested_tree(accessible_items)
 	allowed_routes = collect_allowed_routes(accessible_items, home_route, user)
 
-	response = {
+	return {
 		"company": user_info,
 		"settings": settings,
 		"menu": menu_tree,
@@ -232,11 +225,6 @@ def get_sidebar_data():
 			"allowed_routes": allowed_routes,
 		},
 	}
-	
-	# Cache for subsequent calls
-	frappe.cache().set_value(cache_key, frappe.as_json(response), expires_in_sec=3600)
-	
-	return response
 
 def has_route_permission(item, user):
 	"""
@@ -342,17 +330,14 @@ def build_route(item):
 		return f"/app/{slug}"
 		
 	elif item.route_type == "Report" and item.report_link:
-		slug = slugify(item.report_link)
-		# Query report path pattern
-		return f"/app/query-report/{slug}"
-		
+		return f"/app/query-report/{item.report_link}"
+
 	elif item.route_type == "Page" and item.page_link:
 		slug = slugify(item.page_link)
 		return f"/app/{slug}"
-		
+
 	elif item.route_type == "Workspace" and item.workspace_link:
-		slug = slugify(item.workspace_link)
-		return f"/app/{slug}"
+		return f"/app/{item.workspace_link}"
 		
 	elif item.route_type == "URL" and item.url:
 		return normalize_route(item.url) or "#"
