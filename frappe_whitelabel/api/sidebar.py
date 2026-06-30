@@ -229,40 +229,40 @@ def get_sidebar_data():
 def has_route_permission(item, user):
 	"""
 	Validates access to standard Frappe components referenced in the menu item.
+	Defaults to True when access cannot be determined — permission_rule handles role filtering.
 	"""
 	try:
 		if item.route_type == "DocType" and item.doctype_link:
 			return frappe.has_permission(item.doctype_link, "read", user=user)
-			
+
 		elif item.route_type == "Report" and item.report_link:
-			# Check report permission.
 			ref_doctype = frappe.db.get_value("Report", item.report_link, "ref_doctype")
 			if ref_doctype:
 				return frappe.has_permission(ref_doctype, "read", user=user)
 			return True
-			
+
 		elif item.route_type == "Page" and item.page_link:
-			# If there are roles defined for the Page, user must have at least one.
-			page_roles = frappe.get_all("Custom Role", filters={"page": item.page_link}, pluck="role")
-			if not page_roles:
-				# Check core page roles
-				page_roles = frappe.get_all("Has Role", filters={"parent": item.page_link, "parenttype": "Page"}, pluck="role")
-			
+			# Check roles assigned to the page; if none defined the page is open to all.
+			page_roles = frappe.get_all(
+				"Has Role",
+				filters={"parent": item.page_link, "parenttype": "Page"},
+				pluck="role",
+			)
 			if page_roles and not any(role in frappe.get_roles(user) for role in page_roles):
 				return False
 			return True
-			
+
 		elif item.route_type == "Workspace" and item.workspace_link:
-			# Check Workspace accessibility
-			ws = frappe.get_all("Workspace", filters={"name": item.workspace_link}, fields=["public", "restrict_to_domain"])
-			if ws:
-				# Standard check or just rely on Workspace read permission
-				return frappe.has_permission("Workspace", "read", user=user)
-			return True
+			# Only verify the workspace document exists; role filtering is done by permission_rule.
+			return bool(frappe.db.exists("Workspace", item.workspace_link))
+
 	except Exception as e:
-		frappe.log_error(f"Error checking route permission for {item.label}: {str(e)}", "Sidebar Redesign")
-		return False
-		
+		frappe.log_error(
+			f"Error checking route permission for {item.label}: {str(e)}",
+			"Sidebar Route Permission",
+		)
+		return True  # default to visible — don't silently hide items on error
+
 	return True
 
 def get_theme_colors(doc):
