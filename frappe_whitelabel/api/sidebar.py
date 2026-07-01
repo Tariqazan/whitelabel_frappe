@@ -120,7 +120,7 @@ def is_path_allowed(path, allowed_routes, user=None):
 	if is_unrestricted_user(user):
 		return True
 
-	path = normalize_route(path or "")
+	path = normalize_route(unquote(path or ""))
 	if not path or path in ("/app", "/app/"):
 		return True
 
