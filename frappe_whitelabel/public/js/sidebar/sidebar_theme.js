@@ -11,6 +11,13 @@
 			return "";
 		}
 		let p = String(path).trim();
+		// Decode percent-encoding so "/app/query-report/Trial%20Balance"
+		// matches the stored route "/app/query-report/Trial Balance"
+		try {
+			p = decodeURIComponent(p);
+		} catch (e) {
+			/* keep raw if malformed encoding */
+		}
 		if (!p.startsWith("/")) {
 			p = "/" + p;
 		}
