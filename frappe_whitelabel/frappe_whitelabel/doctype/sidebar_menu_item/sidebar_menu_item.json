@@ -2,7 +2,6 @@
  "actions": [],
  "creation": "2026-06-01 12:00:00",
  "doctype": "DocType",
- "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "label",
@@ -14,13 +13,10 @@
   "column_break_route",
   "route_type",
   "route",
-  "doctype_link",
-  "report_link",
-  "page_link",
-  "workspace_link",
+  "link_to",
   "url",
   "custom_route",
-  "permission_rule"
+  "roles"
  ],
  "fields": [
   {
@@ -81,32 +77,12 @@
    "label": "Route URL"
   },
   {
-   "depends_on": "eval:doc.route_type == 'DocType'",
-   "fieldname": "doctype_link",
-   "fieldtype": "Link",
-   "label": "DocType Link",
-   "options": "DocType"
-  },
-  {
-   "depends_on": "eval:doc.route_type == 'Report'",
-   "fieldname": "report_link",
-   "fieldtype": "Link",
-   "label": "Report Link",
-   "options": "Report"
-  },
-  {
-   "depends_on": "eval:doc.route_type == 'Page'",
-   "fieldname": "page_link",
-   "fieldtype": "Link",
-   "label": "Page Link",
-   "options": "Page"
-  },
-  {
-   "depends_on": "eval:doc.route_type == 'Workspace'",
-   "fieldname": "workspace_link",
-   "fieldtype": "Link",
-   "label": "Workspace Link",
-   "options": "Workspace"
+   "depends_on": "eval:['DocType','Report','Page','Workspace'].includes(doc.route_type)",
+   "description": "Target record for the selected Route Type (e.g. the DocType, Report, Page or Workspace name).",
+   "fieldname": "link_to",
+   "fieldtype": "Dynamic Link",
+   "label": "Link To",
+   "options": "route_type"
   },
   {
    "depends_on": "eval:doc.route_type == 'URL'",
@@ -121,22 +97,32 @@
    "label": "Custom Route"
   },
   {
-   "fieldname": "permission_rule",
-   "fieldtype": "Link",
-   "label": "Permission Rule",
-   "options": "Role"
+   "description": "Leave empty to show this item to everyone. Add one row per role to restrict visibility \u2014 no need to duplicate the parent row per role.",
+   "fieldname": "roles",
+   "fieldtype": "Table",
+   "label": "Allowed Roles",
+   "options": "Sidebar Menu Item Role"
   }
  ],
- "istable": 1,
  "links": [],
- "modified": "2026-06-01 10:56:35.942065",
+ "modified": "2026-07-03 20:38:19.068139",
  "modified_by": "Administrator",
  "module": "Frappe Whitelabel",
  "name": "Sidebar Menu Item",
  "owner": "Administrator",
- "permissions": [],
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
  "quick_entry": 1,
- "row_format": "Dynamic",
  "sort_field": "sequence",
  "sort_order": "ASC",
  "states": [],

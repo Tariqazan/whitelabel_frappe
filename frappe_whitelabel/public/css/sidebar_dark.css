@@ -1,103 +1,62 @@
 /**
  * Whitelabel Sidebar Stylesheets - Dark Theme overrides
- * Sleek, premium dark color configurations for enterprise interfaces.
+ * Refined minimal dark palette — deep slate, low-glare, premium contrast.
  */
 
-/* 1. System Mode overrides (follows Frappe theme state) */
-[data-theme="dark"] #wl-sidebar-root:not(.wl-theme-light) {
-	--sidebar-bg: var(--wl-bg-dark, #0b0f19); /* premium deep obsidian blue/slate */
-	--sidebar-border: #1e293b;
-	--sidebar-text: #f8fafc;
-	--sidebar-text-muted: #94a3b8;
-	--sidebar-hover: #1e293b;
+/* Shared dark token block reused by system + enforced dark modes */
+[data-theme="dark"] #wl-sidebar-root:not(.wl-theme-light),
+#wl-sidebar-root.wl-theme-dark {
+	--sidebar-bg: var(--wl-bg-dark, #0b0f19);
+	--sidebar-surface: #131824;
+	--sidebar-border: #1c2333;
+	--sidebar-border-strong: #263043;
+	--sidebar-text: #f1f5f9;
+	--sidebar-text-muted: var(--wl-secondary, #94a3b8);
+	--sidebar-text-faint: #64748b;
+	--sidebar-hover: #171d2b;
 	--sidebar-active: #1e293b;
-	--sidebar-active-bg: rgba(99, 102, 241, 0.15);
+	--sidebar-active-bg: rgba(129, 140, 248, 0.14);
 	--sidebar-active-text: var(--wl-primary, #a5b4fc);
 	--sidebar-accent: var(--wl-primary, #818cf8);
-	--sidebar-text-muted: var(--wl-secondary, #94a3b8);
+	--sidebar-accent-soft: rgba(129, 140, 248, 0.18);
 }
 
 /* System Mode backdrop and mobile trigger overrides */
 [data-theme="dark"] .wl-mobile-trigger {
 	background: #0b0f19 !important;
-	border-color: #1e293b !important;
-	color: #f8fafc !important;
+	border-color: #1c2333 !important;
+	color: #f1f5f9 !important;
 }
 
 [data-theme="dark"] .wl-mobile-trigger:hover {
-	background: #1e293b !important;
+	background: #171d2b !important;
 }
 
-/* 2. Explicit Theme Overrides (Enforced via admin Configuration) */
-
-/* Enforced Dark Theme */
-#wl-sidebar-root.wl-theme-dark {
-	--sidebar-bg: var(--wl-bg-dark, #0b0f19);
-	--sidebar-border: #1e293b;
-	--sidebar-text: #f8fafc;
-	--sidebar-text-muted: #94a3b8;
-	--sidebar-hover: #1e293b;
-	--sidebar-active: #1e293b;
-	--sidebar-active-bg: rgba(99, 102, 241, 0.15);
-	--sidebar-active-text: var(--wl-primary, #a5b4fc);
-	--sidebar-accent: var(--wl-primary, #818cf8);
-	--sidebar-text-muted: var(--wl-secondary, #94a3b8);
-}
-
-#wl-sidebar-root.wl-theme-dark .wl-search-trigger {
-	background: #111827;
-	border-color: #1e293b;
-	color: #94a3b8;
-}
-
-#wl-sidebar-root.wl-theme-dark .wl-search-trigger:hover {
-	background: #1e293b;
-	border-color: #818cf8;
-	color: #f8fafc;
-}
-
-[data-theme="dark"] .wl-search-trigger {
-	background: #111827;
-	border-color: #1e293b;
-	color: #94a3b8;
-}
-
-[data-theme="dark"] .wl-search-trigger:hover {
-	background: #1e293b;
-}
-
-#wl-sidebar-root.wl-theme-dark .wl-sub-toggle:hover {
-	background: rgba(255,255,255,0.08);
-}
-
-/* Enforced Light Theme */
-#wl-sidebar-root.wl-theme-light {
-	--sidebar-bg: var(--wl-bg-light, #f8fafc);
-	--sidebar-border: #e2e8f0;
-	--sidebar-text: #0f172a;
-	--sidebar-text-muted: #64748b;
-	--sidebar-hover: #f1f5f9;
-	--sidebar-active: #e2e8f0;
-	--sidebar-active-bg: rgba(99, 102, 241, 0.08);
-	--sidebar-active-text: var(--wl-primary, #4f46e5);
-	--sidebar-accent: var(--wl-primary, #6366f1);
-	--sidebar-text-muted: var(--wl-secondary, #64748b);
-}
-
-#wl-sidebar-root.wl-theme-light .wl-search-input {
-	background: #ffffff;
-	border-color: #e2e8f0;
-	color: #0f172a;
-}
-
+/* Dropup / popover depth is heavier on dark */
 [data-theme="dark"] .wl-footer-dropup,
 #wl-sidebar-root.wl-theme-dark .wl-footer-dropup {
-	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+	box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.02);
 }
 
-[data-theme="dark"] .wl-language-select,
-#wl-sidebar-root.wl-theme-dark .wl-language-select {
-	background: #111827;
-	border-color: #1e293b;
-	color: #f8fafc;
+/* Nested toggle hover reads better with a light wash on dark */
+[data-theme="dark"] .wl-sub-toggle:hover,
+#wl-sidebar-root.wl-theme-dark .wl-sub-toggle:hover {
+	background: rgba(255, 255, 255, 0.06);
+}
+
+/* ── Enforced Light Theme (admin override) ── */
+#wl-sidebar-root.wl-theme-light {
+	--sidebar-bg: var(--wl-bg-light, #ffffff);
+	--sidebar-surface: #ffffff;
+	--sidebar-border: #ecedf1;
+	--sidebar-border-strong: #e2e4ea;
+	--sidebar-text: #1a1d26;
+	--sidebar-text-muted: var(--wl-secondary, #6b7280);
+	--sidebar-text-faint: #9aa1ad;
+	--sidebar-hover: #f4f5f7;
+	--sidebar-active: #eef0f3;
+	--sidebar-active-bg: rgba(99, 102, 241, 0.09);
+	--sidebar-active-text: var(--wl-primary, #4f46e5);
+	--sidebar-accent: var(--wl-primary, #6366f1);
+	--sidebar-accent-soft: rgba(99, 102, 241, 0.12);
 }

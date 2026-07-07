@@ -27,17 +27,17 @@ frappe_whitelabel.build_sidebar_route = function (row) {
 		return String(text).toLowerCase().replace(/ /g, "-").replace(/_/g, "-");
 	};
 
-	if (row.route_type === "DocType" && row.doctype_link) {
-		return `/app/${slugify(row.doctype_link)}`;
+	if (row.route_type === "DocType" && row.link_to) {
+		return `/app/${slugify(row.link_to)}`;
 	}
-	if (row.route_type === "Report" && row.report_link) {
-		return `/app/query-report/${slugify(row.report_link)}`;
+	if (row.route_type === "Report" && row.link_to) {
+		return `/app/query-report/${slugify(row.link_to)}`;
 	}
-	if (row.route_type === "Page" && row.page_link) {
-		return `/app/${slugify(row.page_link)}`;
+	if (row.route_type === "Page" && row.link_to) {
+		return `/app/${slugify(row.link_to)}`;
 	}
-	if (row.route_type === "Workspace" && row.workspace_link) {
-		return `/app/${slugify(row.workspace_link)}`;
+	if (row.route_type === "Workspace" && row.link_to) {
+		return `/app/${slugify(row.link_to)}`;
 	}
 	if (row.route_type === "URL" && row.url) {
 		return frappe_whitelabel.normalize_sidebar_route(row.url);
@@ -48,41 +48,31 @@ frappe_whitelabel.build_sidebar_route = function (row) {
 	return frappe_whitelabel.normalize_sidebar_route(row.route || "");
 };
 
-frappe.whitelabel_sync_sidebar_route = function (frm, cdt, cdn, only_if_empty = false) {
-	const row = locals[cdt][cdn];
-	if (only_if_empty && row.route) {
+frappe.whitelabel_sync_sidebar_route = function (frm, only_if_empty = false) {
+	if (only_if_empty && frm.doc.route) {
 		return;
 	}
-	const built = frappe_whitelabel.build_sidebar_route(row);
+	const built = frappe_whitelabel.build_sidebar_route(frm.doc);
 	if (built) {
-		frappe.model.set_value(cdt, cdn, "route", built);
+		frm.set_value("route", built);
 	}
 };
 
 const sidebar_route_triggers = [
 	"route_type",
-	"doctype_link",
-	"report_link",
-	"page_link",
-	"workspace_link",
+	"link_to",
 	"url",
 	"custom_route",
 ];
 
 frappe.ui.form.on("Sidebar Menu Item", {
-	form_render(frm, cdt, cdn) {
-		frappe.whitelabel_sync_sidebar_route(frm, cdt, cdn, true);
+	refresh(frm) {
+		frappe.whitelabel_sync_sidebar_route(frm, true);
 	},
 });
 
 sidebar_route_triggers.forEach((fieldname) => {
-	frappe.ui.form.on("Sidebar Menu Item", fieldname, (frm, cdt, cdn) => {
-		frappe.whitelabel_sync_sidebar_route(frm, cdt, cdn, false);
+	frappe.ui.form.on("Sidebar Menu Item", fieldname, (frm) => {
+		frappe.whitelabel_sync_sidebar_route(frm, false);
 	});
-});
-
-frappe.ui.form.on("Sidebar Configuration", "menu_items", {
-	add(frm, cdt, cdn) {
-		frappe.whitelabel_sync_sidebar_route(frm, cdt, cdn, true);
-	},
 });

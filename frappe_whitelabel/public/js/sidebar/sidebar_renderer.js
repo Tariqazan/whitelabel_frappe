@@ -131,7 +131,7 @@
 
 			const parentSubItems = match.closest(".wl-sub-items");
 			if (parentSubItems) {
-				parentSubItems.style.display = "block";
+				parentSubItems.classList.add("wl-expanded");
 				const parentWrapper = parentSubItems.closest(".wl-menu-item-wrapper.has-sub-items");
 				if (parentWrapper) {
 					parentWrapper.classList.add("active-parent");

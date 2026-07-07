@@ -51,7 +51,7 @@
 					const expanded = subToggle.getAttribute("aria-expanded") === "true";
 					subToggle.setAttribute("aria-expanded", !expanded);
 					if (subItems) {
-						subItems.style.display = expanded ? "none" : "block";
+						subItems.classList.toggle("wl-expanded", !expanded);
 					}
 					return;
 				}
@@ -135,6 +135,20 @@
 				if (menuLink) {
 					e.preventDefault();
 					const route = menuLink.getAttribute("data-route");
+					const wrapper = menuLink.closest(".wl-menu-item-wrapper");
+					const hasSubItems = wrapper && wrapper.classList.contains("has-sub-items");
+
+					// Group headers are non-navigable ("#"/empty route) — clicking the
+					// row should expand/collapse its children, same as the caret toggle,
+					// instead of trying to navigate nowhere.
+					if (hasSubItems && (!route || route === "#")) {
+						const toggle = wrapper.querySelector(".wl-sub-toggle");
+						if (toggle) {
+							toggle.click();
+						}
+						return;
+					}
+
 					const openNewTab = menuLink.getAttribute("data-open-new-tab") === "1";
 					if (route) {
 						Service.navigateToRoute(route, openNewTab);

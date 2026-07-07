@@ -24,16 +24,41 @@ def get_active_sidebar_configuration():
 	return doc
 
 
-def get_accessible_sidebar_items(doc, user=None):
-	"""Menu items the user may see (enabled, role, route permissions)."""
+def get_accessible_sidebar_items(user=None):
+	"""Menu items the user may see (enabled, role, route permissions).
+
+	Sidebar Menu Item is a standalone DocType (not a child table of Sidebar
+	Configuration), so its own `roles` child table (Sidebar Menu Item Role)
+	is a single level of nesting rather than a table-inside-a-table.
+	"""
 	user = user or frappe.session.user
 	accessible_items = []
 
-	for item in doc.get("menu_items") or []:
-		if not item.enabled:
-			continue
+	menu_items = frappe.get_all(
+		"Sidebar Menu Item",
+		filters={"enabled": 1},
+		fields=[
+			"name",
+			"label",
+			"icon",
+			"parent_item",
+			"sequence",
+			"open_in_new_tab",
+			"route_type",
+			"route",
+			"link_to",
+			"url",
+			"custom_route",
+		],
+	)
 
-		if item.permission_rule and item.permission_rule not in frappe.get_roles(user):
+	roles_by_item = {}
+	for row in frappe.get_all("Sidebar Menu Item Role", fields=["parent", "role"]):
+		roles_by_item.setdefault(row.parent, []).append(row.role)
+
+	for item in menu_items:
+		allowed_roles = roles_by_item.get(item.name) or []
+		if allowed_roles and not any(role in frappe.get_roles(user) for role in allowed_roles):
 			continue
 
 		if not has_route_permission(item, user):
@@ -151,7 +176,7 @@ def get_route_guard_bootinfo(user=None):
 	if not doc:
 		return {"wl_route_guard": False, "wl_allowed_routes": []}
 
-	items = get_accessible_sidebar_items(doc, user)
+	items = get_accessible_sidebar_items(user=user)
 	home_route = get_whitelabel_home_route(doc)
 	allowed = collect_allowed_routes(items, home_route, user)
 
@@ -212,7 +237,7 @@ def get_sidebar_data():
 		"home_route": home_route,
 	}
 	
-	accessible_items = get_accessible_sidebar_items(doc, user)
+	accessible_items = get_accessible_sidebar_items(user=user)
 	menu_tree = build_nested_tree(accessible_items)
 	allowed_routes = collect_allowed_routes(accessible_items, home_route, user)
 
@@ -229,32 +254,32 @@ def get_sidebar_data():
 def has_route_permission(item, user):
 	"""
 	Validates access to standard Frappe components referenced in the menu item.
-	Defaults to True when access cannot be determined — permission_rule handles role filtering.
+	Defaults to True when access cannot be determined — the roles table handles role filtering.
 	"""
 	try:
-		if item.route_type == "DocType" and item.doctype_link:
-			return frappe.has_permission(item.doctype_link, "read", user=user)
+		if item.route_type == "DocType" and item.link_to:
+			return frappe.has_permission(item.link_to, "read", user=user)
 
-		elif item.route_type == "Report" and item.report_link:
-			ref_doctype = frappe.db.get_value("Report", item.report_link, "ref_doctype")
+		elif item.route_type == "Report" and item.link_to:
+			ref_doctype = frappe.db.get_value("Report", item.link_to, "ref_doctype")
 			if ref_doctype:
 				return frappe.has_permission(ref_doctype, "read", user=user)
 			return True
 
-		elif item.route_type == "Page" and item.page_link:
+		elif item.route_type == "Page" and item.link_to:
 			# Check roles assigned to the page; if none defined the page is open to all.
 			page_roles = frappe.get_all(
 				"Has Role",
-				filters={"parent": item.page_link, "parenttype": "Page"},
+				filters={"parent": item.link_to, "parenttype": "Page"},
 				pluck="role",
 			)
 			if page_roles and not any(role in frappe.get_roles(user) for role in page_roles):
 				return False
 			return True
 
-		elif item.route_type == "Workspace" and item.workspace_link:
-			# Only verify the workspace document exists; role filtering is done by permission_rule.
-			return bool(frappe.db.exists("Workspace", item.workspace_link))
+		elif item.route_type == "Workspace" and item.link_to:
+			# Only verify the workspace document exists; role filtering is done by the roles table.
+			return bool(frappe.db.exists("Workspace", item.link_to))
 
 	except Exception as e:
 		frappe.log_error(
@@ -325,19 +350,19 @@ def build_route(item):
 	if route and route != "#":
 		return route
 
-	if item.route_type == "DocType" and item.doctype_link:
-		slug = slugify(item.doctype_link)
-		return f"/app/{slug}"
-		
-	elif item.route_type == "Report" and item.report_link:
-		return f"/app/query-report/{item.report_link}"
-
-	elif item.route_type == "Page" and item.page_link:
-		slug = slugify(item.page_link)
+	if item.route_type == "DocType" and item.link_to:
+		slug = slugify(item.link_to)
 		return f"/app/{slug}"
 
-	elif item.route_type == "Workspace" and item.workspace_link:
-		return f"/app/{item.workspace_link}"
+	elif item.route_type == "Report" and item.link_to:
+		return f"/app/query-report/{item.link_to}"
+
+	elif item.route_type == "Page" and item.link_to:
+		slug = slugify(item.link_to)
+		return f"/app/{slug}"
+
+	elif item.route_type == "Workspace" and item.link_to:
+		return f"/app/{item.link_to}"
 		
 	elif item.route_type == "URL" and item.url:
 		return normalize_route(item.url) or "#"
@@ -363,10 +388,13 @@ def build_nested_tree(items):
 	items_map = {}
 	roots = []
 	
-	# Initialize items
+	# Initialize items. setdefault so that if two items share a label (e.g. a
+	# group header "Employee" and a child item also labeled "Employee"), the
+	# first one — normally the header, since it sorts first by sequence —
+	# keeps the map slot instead of being silently overwritten and orphaned.
 	for item in items:
 		item["children"] = []
-		items_map[item["label"]] = item
+		items_map.setdefault(item["label"], item)
 		
 	for item in items:
 		parent = item.get("parent_item")

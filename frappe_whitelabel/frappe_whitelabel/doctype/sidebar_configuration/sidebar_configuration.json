@@ -22,9 +22,7 @@
   "secondary_color",
   "column_break_colors",
   "background_light",
-  "background_dark",
-  "menu_items_section",
-  "menu_items"
+  "background_dark"
  ],
  "fields": [
   {
@@ -126,17 +124,6 @@
    "fieldname": "background_dark",
    "fieldtype": "Color",
    "label": "Background (Dark Theme)"
-  },
-  {
-   "fieldname": "menu_items_section",
-   "fieldtype": "Section Break",
-   "label": "Menu Items Setup"
-  },
-  {
-   "fieldname": "menu_items",
-   "fieldtype": "Table",
-   "label": "Menu Items",
-   "options": "Sidebar Menu Item"
   },
   {
    "fieldname": "home",

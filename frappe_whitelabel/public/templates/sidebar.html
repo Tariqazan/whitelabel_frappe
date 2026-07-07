@@ -146,7 +146,7 @@
 							<path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
 						</svg>
 					</button>
-					<div class="wl-sub-items" style="display: none;">
+					<div class="wl-sub-items">
 						{% for sub in item.children %}
 						<div class="wl-menu-item-wrapper wl-sub-item-wrapper" data-route="{{ sub.route }}">
 							<button type="button" class="wl-menu-link wl-sub-menu-link" data-route="{{ sub.route }}" {% if sub.open_in_new_tab %}data-open-new-tab="1"{% endif %}>
@@ -159,18 +159,20 @@
 								</span>
 								<span class="wl-item-label">{{ sub.label }}</span>
 							</button>
+							{% if settings.enable_favorites %}
 							<button class="wl-favorite-btn {% if sub.isFavorite %}active{% endif %}" data-route="{{ sub.route }}" aria-label="{%= __('Favorite') %}" title="{%= __('Pin Favorite') %}">
 								<svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
 									<path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97 1.882 3.815a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"/>
 								</svg>
 							</button>
+							{% endif %}
 						</div>
 						{% endfor %}
 					</div>
 					{% endif %}
 
 					<!-- Favorite Icon Pin button (for top level links without subitems) -->
-					{% if item.children.length == 0 %}
+					{% if item.children.length == 0 && settings.enable_favorites %}
 					<button class="wl-favorite-btn {% if item.isFavorite %}active{% endif %}" data-route="{{ item.route }}" aria-label="{%= __('Favorite') %}" title="{%= __('Pin Favorite') %}">
 						<svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
 							<path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97 1.882 3.815a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"/>

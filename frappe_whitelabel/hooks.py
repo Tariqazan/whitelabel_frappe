@@ -1,9 +1,27 @@
+import os
+
 app_name = "frappe_whitelabel"
 app_title = "Frappe Whitelabel"
 app_publisher = "Tariqul Islam"
 app_description = "Whitelabel frappe app"
 app_email = "tariqmolla8@gmail.com"
 app_license = "mit"
+
+
+def _asset(url):
+	"""Append an mtime-based ?v= to our static assets so browsers refetch on edit.
+
+	These files are plain (non-bundled) includes, so unlike Frappe's content-hashed
+	`*.bundle.<hash>.css`, their URL never changes and the browser serves the cached
+	copy for the full `max-age` (12h) after any edit. Stamping the file's mtime gives
+	the same auto-cache-busting behaviour without needing `bench build`.
+	"""
+	try:
+		rel = url.replace("/assets/frappe_whitelabel/", "", 1)
+		path = os.path.join(os.path.dirname(__file__), "public", rel)
+		return f"{url}?v={int(os.path.getmtime(path))}"
+	except OSError:
+		return url
 
 # Apps
 # ------------------
@@ -26,10 +44,10 @@ app_license = "mit"
 
 # include js, css files in header of desk.html
 app_include_css = [
-	"/assets/frappe_whitelabel/css/sidebar.css",
-	"/assets/frappe_whitelabel/css/sidebar_mobile.css",
-	"/assets/frappe_whitelabel/css/sidebar_dark.css",
-	"/assets/frappe_whitelabel/css/google_translate.css",
+	_asset("/assets/frappe_whitelabel/css/sidebar.css"),
+	_asset("/assets/frappe_whitelabel/css/sidebar_mobile.css"),
+	_asset("/assets/frappe_whitelabel/css/sidebar_dark.css"),
+	_asset("/assets/frappe_whitelabel/css/google_translate.css"),
 ]
 
 # Map /desk/* subpaths to /app/*; bare /desk and /app use Sidebar Configuration home (client + cache)
@@ -42,16 +60,16 @@ before_request = ["frappe_whitelabel.utils.route_guard.block_desk_urls"]
 boot_session = ["frappe_whitelabel.boot.session_boot"]
 
 app_include_js = [
-	"/assets/frappe_whitelabel/js/sidebar/google_translate.js",
-	"/assets/frappe_whitelabel/js/desk_route_guard.js",
-	"/assets/frappe_whitelabel/js/sidebar/sidebar_route_allowlist.js",
-	"/assets/frappe_whitelabel/js/sidebar/sidebar_store.js",
-	"/assets/frappe_whitelabel/js/sidebar/sidebar_theme.js",
-	"/assets/frappe_whitelabel/js/sidebar/sidebar_service.js",
-	"/assets/frappe_whitelabel/js/sidebar/sidebar_renderer.js",
-	"/assets/frappe_whitelabel/js/sidebar/sidebar_footer.js",
-	"/assets/frappe_whitelabel/js/sidebar/sidebar_events.js",
-	"/assets/frappe_whitelabel/js/sidebar/sidebar.js"
+	_asset("/assets/frappe_whitelabel/js/sidebar/google_translate.js"),
+	_asset("/assets/frappe_whitelabel/js/desk_route_guard.js"),
+	_asset("/assets/frappe_whitelabel/js/sidebar/sidebar_route_allowlist.js"),
+	_asset("/assets/frappe_whitelabel/js/sidebar/sidebar_store.js"),
+	_asset("/assets/frappe_whitelabel/js/sidebar/sidebar_theme.js"),
+	_asset("/assets/frappe_whitelabel/js/sidebar/sidebar_service.js"),
+	_asset("/assets/frappe_whitelabel/js/sidebar/sidebar_renderer.js"),
+	_asset("/assets/frappe_whitelabel/js/sidebar/sidebar_footer.js"),
+	_asset("/assets/frappe_whitelabel/js/sidebar/sidebar_events.js"),
+	_asset("/assets/frappe_whitelabel/js/sidebar/sidebar.js")
 ]
 
 # include js, css files in header of web template
@@ -70,7 +88,7 @@ app_include_js = [
 
 # include js in doctype views
 doctype_js = {
-	"Sidebar Configuration": "public/js/sidebar_menu_item.js",
+	"Sidebar Menu Item": "public/js/sidebar_menu_item.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
